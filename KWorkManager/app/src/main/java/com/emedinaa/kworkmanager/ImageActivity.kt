@@ -3,6 +3,8 @@ package com.emedinaa.kworkmanager
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.work.WorkInfo
@@ -12,7 +14,6 @@ import timber.log.Timber
 
 class ImageActivity : BaseActivity() {
 
-    private val KEY_IMAGE_URI = "KEY_IMAGE_URI"
     private val REQUEST_CODE_IMAGE = 100
 
     private var imagePath:String?=null
@@ -23,8 +24,10 @@ class ImageActivity : BaseActivity() {
         setContentView(R.layout.activity_image)
 
         viewModel = ViewModelProviders.of(this).get(ImageViewModel::class.java)
-        viewModel.outputWorkInfoItems.observe(this, workInfosObserver)
-
+        viewModel.cleanUpWorkInfoItems.observe(this, cleanUpWorkInfosObserver)
+        viewModel.grayScaleWorkInfoItems.observe(this, filterWorkInfosObserver)
+        viewModel.resizeWorkInfoItems.observe(this, resizeWorkInfosObserver)
+        viewModel.uploadWorkInfoItems.observe(this, uploadWorkInfosObserver)
 
         imageView.setOnClickListener {
             selectImage()
@@ -32,6 +35,8 @@ class ImageActivity : BaseActivity() {
 
         buttonProcess.setOnClickListener {
             imagePath?.let {
+                progressBarTask1.visibility= View.VISIBLE
+                buttonProcess.visibility=View.GONE
                 viewModel.process(it)
             }
         }
@@ -43,29 +48,97 @@ class ImageActivity : BaseActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
         }
         startActivityForResult(intent, REQUEST_CODE_IMAGE)
-
     }
 
-    private val workInfosObserver= Observer<List<WorkInfo>> {listOfWorkInfo ->
+    /*private val cleanUpWorkInfosObserver= Observer<WorkInfo> {workInfo ->
+        if (workInfo!=null && workInfo.state.isFinished) {
+            val outputImageUri = workInfo.outputData.getString(KEY_IMAGE_URI)
+            Timber.d("CleanUpWork completed")
+        } else {
+        }
+    }*/
+
+    private val cleanUpWorkInfosObserver= Observer<List<WorkInfo>> { listOfWorkInfo ->
+
         if (listOfWorkInfo.isNullOrEmpty()) {
             return@Observer
         }
 
-        val workInfo = listOfWorkInfo[0]
+        if (listOfWorkInfo[0]!=null ) {
+            when(listOfWorkInfo[0].state){
+                WorkInfo.State.SUCCEEDED ->{
+                    showCleanUpWorkFinished()
+                }
 
-        if (workInfo.state.isFinished) {
-            showWorkFinished()
-
-            val outputImageUri = workInfo.outputData.getString(KEY_IMAGE_URI)
-
-        } else {
-            showWorkInProgress()
+                WorkInfo.State.RUNNING ->{
+                    imageViewTask1.setImageResource(R.drawable.circle_shape_gray)
+                    progressBarTask1.visibility= View.VISIBLE
+                }
+            }
+            Timber.d("CleanUpWork completed")
+            progressBarTask1.visibility= View.GONE
         }
     }
 
-    private fun showWorkInProgress() {}
+    private val filterWorkInfosObserver= Observer<List<WorkInfo>> { listOfWorkInfo ->
+        if (listOfWorkInfo.isNullOrEmpty()) {
+            return@Observer
+        }
+        if (listOfWorkInfo[0]!=null) {
+            when(listOfWorkInfo[0].state){
+                WorkInfo.State.SUCCEEDED ->{
+                    showGrayScaleWorkFinished()
+                }
 
-    private fun showWorkFinished() {}
+                WorkInfo.State.RUNNING ->{
+                    imageViewTask2.setImageResource(R.drawable.circle_shape_gray)
+                    progressBarTask2.visibility= View.VISIBLE
+                }
+            }
+            Timber.d("FilterWork completed")
+        }
+    }
+
+    private val resizeWorkInfosObserver= Observer<List<WorkInfo>> { listOfWorkInfo ->
+        if (listOfWorkInfo.isNullOrEmpty()) {
+            return@Observer
+        }
+
+        if (listOfWorkInfo[0]!=null) {
+            when(listOfWorkInfo[0].state){
+                WorkInfo.State.SUCCEEDED ->{
+                    showResizeWorkFinished()
+                }
+
+                WorkInfo.State.RUNNING ->{
+                    imageViewTask3.setImageResource(R.drawable.circle_shape_gray)
+                    progressBarTask3.visibility= View.VISIBLE
+                }
+            }
+            Timber.d("ResizeWork completed")
+        }
+    }
+
+    private val uploadWorkInfosObserver= Observer<List<WorkInfo>> { listOfWorkInfo ->
+        if (listOfWorkInfo.isNullOrEmpty()) {
+            return@Observer
+        }
+
+        if (listOfWorkInfo[0]!=null) {
+            when(listOfWorkInfo[0].state){
+                WorkInfo.State.SUCCEEDED ->{
+                    showUploadWorkFinished()
+                    buttonProcess.visibility=View.VISIBLE
+                }
+
+                WorkInfo.State.RUNNING ->{
+                    imageViewTask4.setImageResource(R.drawable.circle_shape_gray)
+                    progressBarTask4.visibility= View.VISIBLE
+                }
+            }
+            Timber.d("UploadWork completed")
+        }
+    }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -75,8 +148,27 @@ class ImageActivity : BaseActivity() {
                 Glide.with(this).load(it).into(imageView)
             }
         } else {
-            Timber.e("Ocurrió un error $resultCode")
+            Timber.d("Ocurrió un error $resultCode")
         }
     }
 
+    private fun showCleanUpWorkFinished(){
+        progressBarTask1.visibility= View.GONE
+        imageViewTask1.setImageResource(R.drawable.circle_shape)
+    }
+
+    private fun showGrayScaleWorkFinished(){
+        progressBarTask2.visibility= View.GONE
+        imageViewTask2.setImageResource(R.drawable.circle_shape)
+    }
+
+    private fun showResizeWorkFinished(){
+        progressBarTask3.visibility= View.GONE
+        imageViewTask3.setImageResource(R.drawable.circle_shape)
+    }
+
+    private fun showUploadWorkFinished(){
+        progressBarTask4.visibility= View.GONE
+        imageViewTask4.setImageResource(R.drawable.circle_shape)
+    }
 }

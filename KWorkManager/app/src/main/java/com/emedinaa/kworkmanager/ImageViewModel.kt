@@ -13,47 +13,75 @@ import com.example.background.workers.UploadWorker
 class ImageViewModel:ViewModel(){
 
     protected val IMAGE_MANIPULATION_WORK_NAME = "image_manipulation_work"
-    private val TAG_OUTPUT= "OUTPUT"
+    private val TAG_CLEANUP = "CLEANUP"
+    private val TAG_FILTER = "FILTER"
+    private val TAG_RESIZE = "RESIZE"
+    private val TAG_UPLOAD = "UPLOAD"
+
     private val KEY_IMAGE_URI = "KEY_IMAGE_URI"
 
     internal var imageUri: Uri? = null
-    internal val outputWorkInfoItems: LiveData<List<WorkInfo>>
+    //internal var cleanUpWorkInfoItems: LiveData<WorkInfo>?=null
+
+    internal val cleanUpWorkInfoItems: LiveData<List<WorkInfo>>
+    internal val grayScaleWorkInfoItems: LiveData<List<WorkInfo>>
+    internal val resizeWorkInfoItems: LiveData<List<WorkInfo>>
+    internal val uploadWorkInfoItems: LiveData<List<WorkInfo>>
 
     private val workManager= Injector.provideWorkManager()
 
     init {
-        outputWorkInfoItems = workManager.getWorkInfosByTagLiveData(TAG_OUTPUT)
+        cleanUpWorkInfoItems=workManager.getWorkInfosByTagLiveData(TAG_CLEANUP)
+        grayScaleWorkInfoItems=workManager.getWorkInfosByTagLiveData(TAG_FILTER)
+        resizeWorkInfoItems=workManager.getWorkInfosByTagLiveData(TAG_RESIZE)
+        uploadWorkInfoItems=workManager.getWorkInfosByTagLiveData(TAG_UPLOAD)
     }
 
     internal fun process(data:String){
         imageUri= Uri.parse(data)
 
+        val cleanUploadBuilder= OneTimeWorkRequestBuilder<CleanupWorker>()
+        cleanUploadBuilder.addTag(TAG_CLEANUP)
+        val cleanUpWorker = cleanUploadBuilder.build()
+
         var continuation = workManager
             .beginUniqueWork(
                 IMAGE_MANIPULATION_WORK_NAME,
                 ExistingWorkPolicy.REPLACE,
-                OneTimeWorkRequest.from(CleanupWorker::class.java)
+                cleanUpWorker
             )
-
 
         val grayBuilder = OneTimeWorkRequestBuilder<GrayscaleWorker>()
         grayBuilder.setInputData(createInputDataForUri())
-        continuation = continuation.then(grayBuilder.build())
+        grayBuilder.addTag(TAG_FILTER)
+        val grayScaleWorker = grayBuilder.build()
 
-        val constraints = Constraints.Builder()
-            .setRequiresCharging(true)
+        continuation = continuation.then(grayScaleWorker)
+
+        val resizeConstraints = Constraints.Builder()
+            .setRequiresCharging(true) // .setRequiresStorageNotLow(true)
             .build()
 
-        val resize = OneTimeWorkRequestBuilder<ResizeWorker>()
-            .setConstraints(constraints)
-            .build()
-        continuation = continuation.then(resize)
+        val resizeBuilder = OneTimeWorkRequestBuilder<ResizeWorker>()
+            .setConstraints(resizeConstraints)
+            .addTag(TAG_RESIZE)
+        val resizeWorker = resizeBuilder.build()
+
+        continuation = continuation.then(resizeWorker)
 
 
-        val upload= OneTimeWorkRequestBuilder<UploadWorker>()
-            .addTag(TAG_OUTPUT)
+        val upLoadconstraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
-        continuation = continuation.then(upload)
+        val uploadBuilder= OneTimeWorkRequestBuilder<UploadWorker>()
+            .addTag(TAG_UPLOAD)
+            .setConstraints(upLoadconstraints)
+
+        val uploadWorker = uploadBuilder.build()
+
+        continuation = continuation.then(uploadWorker)
+
+        //cleanUpWorkInfoItems = workManager.getWorkInfoByIdLiveData(cleanUpWorker.id)
         continuation.enqueue()
     }
 
@@ -67,7 +95,8 @@ class ImageViewModel:ViewModel(){
     }
 
     internal fun cancelWork() {
-        workManager.cancelUniqueWork(IMAGE_MANIPULATION_WORK_NAME)
+        //workManager.cancelUniqueWork(IMAGE_MANIPULATION_WORK_NAME)
+        //workManager.cancelAllWork()
     }
 
 }

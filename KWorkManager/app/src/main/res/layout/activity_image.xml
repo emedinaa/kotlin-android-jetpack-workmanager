@@ -18,7 +18,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/circle_shape" />
+        app:srcCompat="@drawable/circle_shape_gray" />
 
     <ImageView
         android:id="@+id/imageViewTask2"
@@ -29,7 +29,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageViewTask1"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/circle_shape" />
+        app:srcCompat="@drawable/circle_shape_gray" />
 
     <ImageView
         android:id="@+id/imageViewTask3"
@@ -40,7 +40,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageViewTask2"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/circle_shape" />
+        app:srcCompat="@drawable/circle_shape_gray" />
 
     <ImageView
         android:id="@+id/imageViewTask4"
@@ -53,7 +53,59 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageViewTask3"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/circle_shape" />
+        app:srcCompat="@drawable/circle_shape_gray" />
+
+    <ProgressBar
+        android:id="@+id/progressBarTask1"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewTask1"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewTask1"
+        app:layout_constraintStart_toStartOf="@+id/imageViewTask1"
+        app:layout_constraintTop_toTopOf="@+id/imageViewTask1" />
+
+    <ProgressBar
+        android:id="@+id/progressBarTask2"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewTask2"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewTask2"
+        app:layout_constraintStart_toStartOf="@+id/imageViewTask2"
+        app:layout_constraintTop_toTopOf="@+id/imageViewTask2" />
+
+    <ProgressBar
+        android:id="@+id/progressBarTask3"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewTask3"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewTask3"
+        app:layout_constraintStart_toStartOf="@+id/imageViewTask3"
+        app:layout_constraintTop_toTopOf="@+id/imageViewTask3" />
+
+    <ProgressBar
+        android:id="@+id/progressBarTask4"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewTask4"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewTask4"
+        app:layout_constraintStart_toStartOf="@+id/imageViewTask4"
+        app:layout_constraintTop_toTopOf="@+id/imageViewTask4" />
 
     <ImageView
         android:id="@+id/imageView"
