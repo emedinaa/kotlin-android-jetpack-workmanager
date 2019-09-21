@@ -5,17 +5,8 @@
 
 https://obscure-earth-55790.herokuapp.com/userPhoto-1568858169614.jpg
 
-https://obscure-earth-55790.herokuapp.com/userPhoto-1568853015253.jpg
-
-https://obscure-earth-55790.herokuapp.com/userPhoto-1568865775376.jpg
-
-https://obscure-earth-55790.herokuapp.com/userPhoto-1568866227791.jpg
-
-https://obscure-earth-55790.herokuapp.com/userPhoto-1568937607416.jpg
-
-https://obscure-earth-55790.herokuapp.com/userPhoto-1568939033917.jpg
-
-https://obscure-earth-55790.herokuapp.com/userPhoto-1568942528129.jpg
+## Slides
+Android WorkManager - Kotlin/Everywhere Lima (spanish) https://docs.google.com/presentation/d/17z4nLFZQaRJFcyxZzwiFqngHzmUXTtQIXFv8N-fIlMU/edit?usp=sharing 
 
 ## Screenshots
 
@@ -23,7 +14,7 @@ https://obscure-earth-55790.herokuapp.com/userPhoto-1568942528129.jpg
 
 ## Updates
 
-- xxxx
+- Testing (comming soon)
 
 ## Dependencies
 
@@ -43,5 +34,6 @@ https://obscure-earth-55790.herokuapp.com/userPhoto-1568942528129.jpg
 - WorkManager Android Developers https://developer.android.com/topic/libraries/architecture/workmanager
 - Background Work with WorkManager Kotlin https://codelabs.developers.google.com/codelabs/android-workmanager-kt/
 - Android Jetpack: Introducing WorkManager https://www.youtube.com/watch?v=pe_yqM16hPQ
+- Guide to WorkManager / Android Dev Summit '18 https://www.youtube.com/watch?v=83a4rYXsDs0
 
 I appreciate if you have any question or comment. Also, if you consider it useful, you can give me a star. Besides, you can put any issue at https://github.com/emedinaa/kotlin-android-jetpack-workmanager/issues
