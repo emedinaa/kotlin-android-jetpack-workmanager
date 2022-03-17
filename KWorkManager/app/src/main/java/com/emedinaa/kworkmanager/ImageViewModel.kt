@@ -5,42 +5,42 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.work.*
 import com.emedinaa.kworkmanager.di.Injector
-import com.example.background.workers.CleanupWorker
-import com.example.background.workers.GrayscaleWorker
-import com.example.background.workers.ResizeWorker
-import com.example.background.workers.UploadWorker
+import com.emedinaa.kworkmanager.workers.CleanupWorker
+import com.emedinaa.kworkmanager.workers.GrayscaleWorker
+import com.emedinaa.kworkmanager.workers.ResizeWorker
+import com.emedinaa.kworkmanager.workers.UploadWorker
 
-class ImageViewModel:ViewModel(){
+private const val IMAGE_MANIPULATION_WORK_NAME = "image_manipulation_work"
+private const val TAG_CLEANUP = "CLEANUP"
+private const val TAG_FILTER = "FILTER"
+private const val TAG_RESIZE = "RESIZE"
+private const val TAG_UPLOAD = "UPLOAD"
 
-    protected val IMAGE_MANIPULATION_WORK_NAME = "image_manipulation_work"
-    private val TAG_CLEANUP = "CLEANUP"
-    private val TAG_FILTER = "FILTER"
-    private val TAG_RESIZE = "RESIZE"
-    private val TAG_UPLOAD = "UPLOAD"
+private const val KEY_IMAGE_URI = "KEY_IMAGE_URI"
 
-    private val KEY_IMAGE_URI = "KEY_IMAGE_URI"
+class ImageViewModel : ViewModel() {
 
-    internal var imageUri: Uri? = null
+    private var imageUri: Uri? = null
     //internal var cleanUpWorkInfoItems: LiveData<WorkInfo>?=null
 
-    internal val cleanUpWorkInfoItems: LiveData<List<WorkInfo>>
-    internal val grayScaleWorkInfoItems: LiveData<List<WorkInfo>>
-    internal val resizeWorkInfoItems: LiveData<List<WorkInfo>>
-    internal val uploadWorkInfoItems: LiveData<List<WorkInfo>>
+    private val cleanUpWorkInfoItems: LiveData<List<WorkInfo>>
+    private val grayScaleWorkInfoItems: LiveData<List<WorkInfo>>
+    private val resizeWorkInfoItems: LiveData<List<WorkInfo>>
+    private val uploadWorkInfoItems: LiveData<List<WorkInfo>>
 
-    private val workManager= Injector.provideWorkManager()
+    private val workManager = Injector.provideWorkManager()
 
     init {
-        cleanUpWorkInfoItems=workManager.getWorkInfosByTagLiveData(TAG_CLEANUP)
-        grayScaleWorkInfoItems=workManager.getWorkInfosByTagLiveData(TAG_FILTER)
-        resizeWorkInfoItems=workManager.getWorkInfosByTagLiveData(TAG_RESIZE)
-        uploadWorkInfoItems=workManager.getWorkInfosByTagLiveData(TAG_UPLOAD)
+        cleanUpWorkInfoItems = workManager.getWorkInfosByTagLiveData(TAG_CLEANUP)
+        grayScaleWorkInfoItems = workManager.getWorkInfosByTagLiveData(TAG_FILTER)
+        resizeWorkInfoItems = workManager.getWorkInfosByTagLiveData(TAG_RESIZE)
+        uploadWorkInfoItems = workManager.getWorkInfosByTagLiveData(TAG_UPLOAD)
     }
 
-    internal fun process(data:String){
-        imageUri= Uri.parse(data)
+    internal fun process(data: String) {
+        imageUri = Uri.parse(data)
 
-        val cleanUploadBuilder= OneTimeWorkRequestBuilder<CleanupWorker>()
+        val cleanUploadBuilder = OneTimeWorkRequestBuilder<CleanupWorker>()
         cleanUploadBuilder.addTag(TAG_CLEANUP)
         val cleanUpWorker = cleanUploadBuilder.build()
 
@@ -69,13 +69,12 @@ class ImageViewModel:ViewModel(){
 
         continuation = continuation.then(resizeWorker)
 
-
-        val upLoadconstraints = Constraints.Builder()
+        val upLoadConstraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
-        val uploadBuilder= OneTimeWorkRequestBuilder<UploadWorker>()
+        val uploadBuilder = OneTimeWorkRequestBuilder<UploadWorker>()
             .addTag(TAG_UPLOAD)
-            .setConstraints(upLoadconstraints)
+            .setConstraints(upLoadConstraints)
 
         val uploadWorker = uploadBuilder.build()
 
@@ -89,7 +88,7 @@ class ImageViewModel:ViewModel(){
     private fun createInputDataForUri(): Data {
         val builder = Data.Builder()
         imageUri?.let {
-            builder.putString(KEY_IMAGE_URI, imageUri.toString())
+            builder.putString(KEY_IMAGE_URI, it.toString())
         }
         return builder.build()
     }

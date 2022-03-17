@@ -1,16 +1,15 @@
-package com.example.background.workers
+package com.emedinaa.kworkmanager.workers
 
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
-import java.io.FileNotFoundException
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.emedinaa.kworkmanager.utils.grayScaleBitmap
 import com.emedinaa.kworkmanager.utils.writeBitmapToFile
-import com.emedinaa.kworkmanager.workers.BaseWorker
 import timber.log.Timber
+import java.io.FileNotFoundException
 
 class GrayscaleWorker(ctx: Context, params: WorkerParameters) : BaseWorker(ctx, params) {
 
@@ -21,7 +20,7 @@ class GrayscaleWorker(ctx: Context, params: WorkerParameters) : BaseWorker(ctx, 
         sleep()
 
         return try {
-            val outputData =createGrayscaleBitmap (appContext, inputData.getString(KEY_IMAGE_URI))
+            val outputData = createGrayscaleBitmap(appContext, inputData.getString(KEY_IMAGE_URI))
             Result.success(outputData)
         } catch (fileNotFoundException: FileNotFoundException) {
             Timber.e(fileNotFoundException)
@@ -42,7 +41,8 @@ class GrayscaleWorker(ctx: Context, params: WorkerParameters) : BaseWorker(ctx, 
         val resolver = appContext.contentResolver
 
         val bitmap = BitmapFactory.decodeStream(
-                resolver.openInputStream(Uri.parse(resourceUri)))
+            resolver.openInputStream(Uri.parse(resourceUri))
+        )
 
         val output = grayScaleBitmap(bitmap, appContext)
 

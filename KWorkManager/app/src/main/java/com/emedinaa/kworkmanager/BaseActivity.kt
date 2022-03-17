@@ -3,27 +3,31 @@ package com.emedinaa.kworkmanager
 import android.Manifest
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.AppSettingsDialog
+import pub.devrel.easypermissions.EasyPermissions
 
+private const val STORAGE_REQUEST_CODE = 101
 
-abstract class BaseActivity:AppCompatActivity(),EasyPermissions.PermissionCallbacks {
-
-    private val STORAGE_REQUEST_CODE = 101
+abstract class BaseActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestPermissions()
     }
 
-    private fun requestPermissions(){
-        if(EasyPermissions.hasPermissions(this,Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+    private fun requestPermissions() {
+        if (EasyPermissions.hasPermissions(
+                this, Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        ) {
 
-        }else{
-            EasyPermissions.requestPermissions(this, "Se requiero permiso de acceso al disco",
+        } else {
+            EasyPermissions.requestPermissions(
+                this, "Se requiero permiso de acceso al disco",
                 STORAGE_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
         }
     }
 

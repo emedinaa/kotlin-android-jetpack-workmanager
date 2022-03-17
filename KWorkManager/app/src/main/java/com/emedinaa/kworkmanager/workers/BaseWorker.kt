@@ -11,17 +11,20 @@ import androidx.work.WorkerParameters
 import com.emedinaa.kworkmanager.R
 import timber.log.Timber
 
-abstract class BaseWorker(ctx: Context, params: WorkerParameters):Worker(ctx,params) {
+
+private const val VERBOSE_NOTIFICATION_CHANNEL_DESCRIPTION =
+    "Shows notifications whenever work starts"
+private const val CHANNEL_ID = "VERBOSE_NOTIFICATION"
+private const val NOTIFICATION_ID = 1
+private const val DELAY_TIME_MILLIS: Long = 3000
+
+abstract class BaseWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
 
     private val VERBOSE_NOTIFICATION_CHANNEL_NAME: CharSequence =
         "Verbose WorkManager Notifications"
-    private val VERBOSE_NOTIFICATION_CHANNEL_DESCRIPTION =
-        "Shows notifications whenever work starts"
-    private val NOTIFICATION_TITLE: CharSequence = "WorkRequest Starting"
-    private val CHANNEL_ID = "VERBOSE_NOTIFICATION"
-    private val NOTIFICATION_ID = 1
 
-    private val DELAY_TIME_MILLIS: Long = 3000
+    private val NOTIFICATION_TITLE: CharSequence = "WorkRequest Starting"
+
     protected val KEY_IMAGE_URI = "KEY_IMAGE_URI"
 
     override fun doWork(): Result {
@@ -31,11 +34,11 @@ abstract class BaseWorker(ctx: Context, params: WorkerParameters):Worker(ctx,par
     protected fun sleep() {
         try {
             Thread.sleep(DELAY_TIME_MILLIS, 0)
-        } catch (e: InterruptedException) {
-            Timber.e(e)
+        } catch (exception: InterruptedException) {
+            Timber.e(exception)
         }
-
     }
+
     protected fun makeStatusNotification(message: String, context: Context) {
 
         // Make a channel if necessary

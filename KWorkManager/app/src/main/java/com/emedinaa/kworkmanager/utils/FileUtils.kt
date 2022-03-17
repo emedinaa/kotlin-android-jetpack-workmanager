@@ -27,9 +27,9 @@ fun writeBitmapToFile(applicationContext: Context, bitmap: Bitmap): Uri {
         out?.let {
             try {
                 it.close()
-            } catch (ignore: IOException) {
+            } catch (ioException: IOException) {
+                throw ioException
             }
-
         }
     }
     return Uri.fromFile(outputFile)

@@ -5,11 +5,11 @@ import androidx.work.WorkManager
 
 object Injector {
 
-    private lateinit var workManager:WorkManager
+    private lateinit var workManager: WorkManager
 
-    fun setup(application: Application){
-        workManager= WorkManager.getInstance(application)
+    fun setup(application: Application) {
+        workManager = WorkManager.getInstance(application)
     }
 
-    fun provideWorkManager():WorkManager= workManager
+    fun provideWorkManager(): WorkManager = workManager
 }

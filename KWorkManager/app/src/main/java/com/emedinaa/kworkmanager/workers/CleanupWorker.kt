@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package com.example.background.workers
+package com.emedinaa.kworkmanager.workers
 
 import android.content.Context
-import java.io.File
-
 import androidx.work.WorkerParameters
 import com.emedinaa.kworkmanager.utils.OUTPUT_PATH
-import com.emedinaa.kworkmanager.workers.BaseWorker
 import timber.log.Timber
+import java.io.File
 
 class CleanupWorker(ctx: Context, params: WorkerParameters) : BaseWorker(ctx, params) {
 
@@ -45,8 +43,8 @@ class CleanupWorker(ctx: Context, params: WorkerParameters) : BaseWorker(ctx, pa
                 }
             }
             Result.success()
-        } catch (e: Exception) {
-            Timber.e(e)
+        } catch (exception: Exception) {
+            Timber.e(exception)
             Result.failure()
         }
     }

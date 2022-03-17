@@ -1,24 +1,23 @@
-package com.example.background.workers
+package com.emedinaa.kworkmanager.workers
 
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
-
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.emedinaa.kworkmanager.workers.BaseWorker
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
+
+private const val TITLE = "Resized Image"
 
 class ResizeWorker(ctx: Context, params: WorkerParameters) : BaseWorker(ctx, params) {
 
-    private val Title = "Resized Image"
-    private val dateFormatter = SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z",
-            Locale.getDefault())
+    private val dateFormatter = SimpleDateFormat(
+        "yyyy.MM.dd 'at' HH:mm:ss z",
+        Locale.getDefault()
+    )
 
     override fun doWork(): Result {
         val appContext = applicationContext
@@ -32,23 +31,25 @@ class ResizeWorker(ctx: Context, params: WorkerParameters) : BaseWorker(ctx, par
             val bitmap = BitmapFactory.Options().run {
                 inJustDecodeBounds = true
                 BitmapFactory.decodeStream(
-                        resolver.openInputStream(Uri.parse(resourceUri)),null,this)
+                    resolver.openInputStream(Uri.parse(resourceUri)), null, this
+                )
 
                 inSampleSize = calculateInSampleSize(this, 100, 100)
 
                 inJustDecodeBounds = false
 
                 BitmapFactory.decodeStream(
-                        resolver.openInputStream(Uri.parse(resourceUri)), null,this)
+                    resolver.openInputStream(Uri.parse(resourceUri)), null, this
+                )
             }
 
-            if (bitmap!=null) {
+            if (bitmap != null) {
                 val imageUrl = MediaStore.Images.Media.insertImage(
-                        resolver, bitmap, Title, dateFormatter.format(Date()))
+                    resolver, bitmap, TITLE, dateFormatter.format(Date())
+                )
 
                 if (!imageUrl.isNullOrEmpty()) {
                     val output = workDataOf(KEY_IMAGE_URI to imageUrl)
-
                     Result.success(output)
                 } else {
                     Timber.e("Writing to MediaStore failed")
@@ -58,13 +59,17 @@ class ResizeWorker(ctx: Context, params: WorkerParameters) : BaseWorker(ctx, par
                 Timber.e("Writing to MediaStore failed")
                 Result.failure()
             }
-        } catch (e: Exception) {
-            Timber.e("Unable to save image to Gallery $e")
+        } catch (exception: Exception) {
+            Timber.e("Unable to save image to Gallery $exception")
             Result.failure()
         }
     }
 
-    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    private fun calculateInSampleSize(
+        options: BitmapFactory.Options,
+        reqWidth: Int,
+        reqHeight: Int
+    ): Int {
         val (height: Int, width: Int) = options.run { outHeight to outWidth }
         var inSampleSize = 1
 
